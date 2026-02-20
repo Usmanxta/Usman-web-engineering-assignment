@@ -1,102 +1,102 @@
-// Form validation and submission
+// Contact form handling and validation
 document.addEventListener('DOMContentLoaded', function() {
     const contactForm = document.getElementById('contactForm');
 
-    // Form validation
-    function validateForm() {
-        let isValid = true;
-        const errors = {
+    // Simple form validation function
+    function checkForm() {
+        let allGood = true;
+        const errorMessages = {
             name: '',
             email: '',
             subject: '',
             message: ''
         };
 
-        // Name validation
-        const name = document.getElementById('name').value.trim();
-        if (name === '') {
-            errors.name = 'Name is required';
-            isValid = false;
-        } else if (name.length < 2) {
-            errors.name = 'Name must be at least 2 characters';
-            isValid = false;
+        // Check name field
+        const nameInput = document.getElementById('name').value.trim();
+        if (nameInput === '') {
+            errorMessages.name = 'Please enter your name';
+            allGood = false;
+        } else if (nameInput.length < 2) {
+            errorMessages.name = 'Name should be at least 2 characters';
+            allGood = false;
         }
 
-        // Email validation
-        const email = document.getElementById('email').value.trim();
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (email === '') {
-            errors.email = 'Email is required';
-            isValid = false;
-        } else if (!emailRegex.test(email)) {
-            errors.email = 'Please enter a valid email address';
-            isValid = false;
+        // Check email field
+        const emailInput = document.getElementById('email').value.trim();
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailInput === '') {
+            errorMessages.email = 'Email is required';
+            allGood = false;
+        } else if (!emailPattern.test(emailInput)) {
+            errorMessages.email = 'Please enter a valid email';
+            allGood = false;
         }
 
-        // Subject validation
-        const subject = document.getElementById('subject').value.trim();
-        if (subject === '') {
-            errors.subject = 'Subject is required';
-            isValid = false;
-        } else if (subject.length < 5) {
-            errors.subject = 'Subject must be at least 5 characters';
-            isValid = false;
+        // Check subject field
+        const subjectInput = document.getElementById('subject').value.trim();
+        if (subjectInput === '') {
+            errorMessages.subject = 'Subject is required';
+            allGood = false;
+        } else if (subjectInput.length < 5) {
+            errorMessages.subject = 'Subject should be longer';
+            allGood = false;
         }
 
-        // Message validation
-        const message = document.getElementById('message').value.trim();
-        if (message === '') {
-            errors.message = 'Message is required';
-            isValid = false;
-        } else if (message.length < 10) {
-            errors.message = 'Message must be at least 10 characters';
-            isValid = false;
+        // Check message field
+        const messageInput = document.getElementById('message').value.trim();
+        if (messageInput === '') {
+            errorMessages.message = 'Please write a message';
+            allGood = false;
+        } else if (messageInput.length < 10) {
+            errorMessages.message = 'Message should be at least 10 characters';
+            allGood = false;
         }
 
-        // Display errors
-        Object.keys(errors).forEach(field => {
-            const errorElement = document.getElementById(field + 'Error');
-            if (errors[field]) {
-                errorElement.textContent = errors[field];
-                errorElement.style.display = 'block';
+        // Show or hide error messages
+        Object.keys(errorMessages).forEach(fieldName => {
+            const errorDiv = document.getElementById(fieldName + 'Error');
+            if (errorMessages[fieldName]) {
+                errorDiv.textContent = errorMessages[fieldName];
+                errorDiv.style.display = 'block';
             } else {
-                errorElement.style.display = 'none';
+                errorDiv.style.display = 'none';
             }
         });
 
-        return isValid;
+        return allGood;
     }
 
-    // Real-time validation
-    const inputs = ['name', 'email', 'subject', 'message'];
-    inputs.forEach(inputId => {
-        const input = document.getElementById(inputId);
-        input.addEventListener('blur', function() {
-            validateForm();
+    // Add validation on input change
+    const formFields = ['name', 'email', 'subject', 'message'];
+    formFields.forEach(fieldId => {
+        const field = document.getElementById(fieldId);
+        field.addEventListener('blur', function() {
+            checkForm();
         });
-        input.addEventListener('input', function() {
-            const errorElement = document.getElementById(inputId + 'Error');
-            if (errorElement.style.display === 'block') {
-                validateForm();
+        field.addEventListener('input', function() {
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            if (errorDiv.style.display === 'block') {
+                checkForm();
             }
         });
     });
 
-    // Form submission
+    // Handle form submission
     contactForm.addEventListener('submit', function(e) {
         e.preventDefault();
 
-        if (validateForm()) {
-            // Show loading state
-            const submitBtn = contactForm.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Sending...';
-            submitBtn.disabled = true;
+        if (checkForm()) {
+            // Change button text while sending
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
 
-            // Prepare form data
+            // Get form data
             const formData = new FormData(contactForm);
 
-            // Send email using Formspree (you need to replace 'your-form-id' with actual Formspree form ID)
+            // Send the form data
             fetch(contactForm.action, {
                 method: 'POST',
                 body: formData,
@@ -106,33 +106,33 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => {
                 if (response.ok) {
-                    // Success
-                    alert('Thank you for your message! We will get back to you soon.');
+                    // Success message
+                    alert('Thanks for your message! We will get back to you soon.');
                     contactForm.reset();
                 } else {
-                    // Error
-                    alert('Oops! There was a problem sending your message. Please try again or contact us directly at info@paf-iast.edu.pk');
+                    // Error message
+                    alert('Sorry, there was a problem sending your message. Please try again or email us directly.');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Oops! There was a problem sending your message. Please try again or contact us directly at info@paf-iast.edu.pk');
+                alert('Sorry, there was a problem sending your message. Please try again or email us directly.');
             })
             .finally(() => {
                 // Reset button
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
             });
         }
     });
 
-    // Smooth scrolling for navigation
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+    // Smooth scrolling for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener('click', function (e) {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
+            const targetSection = document.querySelector(this.getAttribute('href'));
+            if (targetSection) {
+                targetSection.scrollIntoView({
                     behavior: 'smooth',
                     block: 'start'
                 });
@@ -140,8 +140,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Add animation on scroll
-    const observerOptions = {
+    // Add some animation effects
+    const observerSettings = {
         threshold: 0.1,
         rootMargin: '0px 0px -50px 0px'
     };
@@ -149,29 +149,37 @@ document.addEventListener('DOMContentLoaded', function() {
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('animate');
+                entry.target.classList.add('show');
             }
         });
-    }, observerOptions);
+    }, observerSettings);
 
-    // Observe elements for animation
-    document.querySelectorAll('.feature, .stat, .country').forEach(el => {
-        observer.observe(el);
+    // Add animation to these elements
+    document.querySelectorAll('.feature, .stat, .country, .gallery-item').forEach(element => {
+        observer.observe(element);
     });
 });
 
-// Add some CSS animations
-const style = document.createElement('style');
-style.textContent = `
-    .feature, .stat, .country {
+// Add some basic CSS animations
+const animationStyles = document.createElement('style');
+animationStyles.textContent = `
+    .feature, .stat, .country, .gallery-item {
         opacity: 0;
-        transform: translateY(30px);
-        transition: opacity 0.6s ease, transform 0.6s ease;
+        transform: translateY(20px);
+        transition: all 0.5s ease;
     }
 
-    .feature.animate, .stat.animate, .country.animate {
+    .feature.show, .stat.show, .country.show, .gallery-item.show {
         opacity: 1;
         transform: translateY(0);
     }
+
+    .hero-img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 10px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    }
 `;
-document.head.appendChild(style);
+document.head.appendChild(animationStyles);
