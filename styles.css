@@ -570,3 +570,31 @@ body {
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
+
+/* Additional overrides to ensure images don't overflow on GitHub Pages */
+.hero {
+    min-height: 60vh !important;
+    padding: 80px 0 60px !important;
+}
+
+.hero-img {
+    width: 100%;
+    max-width: 900px;
+    height: auto;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: block;
+    margin: 0 auto;
+}
+
+.gallery-item img {
+    max-height: 320px;
+}
+
+@media (max-width: 600px) {
+    .hero-img { max-height: 260px; }
+    .gallery-item img { max-height: 220px; }
+    .about-img { max-height: 220px; }
+}
